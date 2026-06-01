@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeissCube — Card Gallery</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0d12;
+    --surface: #16161f;
+    --border: #2a2a3e;
+    --accent: #7a7aff;
+    --text: #dde0ee;
+    --muted: #666;
+    --card-w: 200px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+  }
+
+  header {
+    background: #11111c;
+    border-bottom: 2px solid var(--border);
+    padding: 18px 24px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  header h1 { font-size: 22px; color: var(--accent); letter-spacing: 0.5px; }
+  header .subtitle { font-size: 13px; color: var(--muted); }
+
+  #grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr));
+    gap: 20px;
+    padding: 28px 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .card-item {
+    cursor: pointer;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+    display: flex;
+    flex-direction: column;
+  }
+  .card-item:hover {
+    transform: translateY(-4px) scale(1.02);
+    border-color: var(--accent);
+    box-shadow: 0 8px 28px rgba(122, 122, 255, 0.2);
+  }
+  .card-item img {
+    width: 100%;
+    aspect-ratio: 448 / 626;
+    object-fit: cover;
+    display: block;
+  }
+  .card-label {
+    padding: 8px 10px;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    border-top: 1px solid var(--border);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Lightbox */
+  #lb {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    flex-direction: column;
+    gap: 14px;
+  }
+  #lb.open { display: flex; }
+  #lb img {
+    max-height: 85vh;
+    max-width: 90vw;
+    border-radius: 6px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    object-fit: contain;
+  }
+  #lb-name {
+    color: #eee;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+  }
+  #lb-close {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px 8px;
+  }
+  #lb-close:hover { color: #fff; }
+
+  #lb-prev, #lb-next {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #ddd;
+    font-size: 22px;
+    padding: 12px 16px;
+    cursor: pointer;
+    border-radius: 6px;
+    user-select: none;
+  }
+  #lb-prev:hover, #lb-next:hover { background: rgba(255,255,255,0.16); }
+  #lb-prev { left: 12px; }
+  #lb-next { right: 12px; }
+
+  footer {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--muted);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 16px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>WeissCube</h1>
+  <span class="subtitle">Card Gallery &mdash; 20 cards</span>
+</header>
+
+<div id="grid"></div>
+
+<footer>WeissCube &mdash; a custom Weiss Schwarz cube</footer>
+
+<div id="lb">
+  <button id="lb-close" onclick="closeLb()" title="Close (Esc)">&#x2715;</button>
+  <button id="lb-prev" onclick="stepLb(-1)">&#8249;</button>
+  <img id="lb-img" src="" alt="">
+  <div id="lb-name"></div>
+  <button id="lb-next" onclick="stepLb(1)">&#8250;</button>
+</div>
+
+<script>
+const cards = [
+  "ASU - Sweeper.png",
+  "Agent Gulliver Boxed.png",
+  "Amillion.png",
+  "Aria Robot.png",
+  "Boollseye.png",
+  "Butler Boxed.png",
+  "Chef.png",
+  "Cryboo.png",
+  "Excaliboo.png",
+  "Exploreboo.png",
+  "Hollow Thug - Looter.png",
+  "Luckyboo.png",
+  "Miss Esme Boxed.png",
+  "Officer Cui Boxed.png",
+  "Overtimeboo.png",
+  "Plugboo Boxed.png",
+  "Red Moccus Boxed.png",
+  "Safety Boxed.png",
+  "Sprout Boxed.png",
+  "Sumoboo.png"
+];
+
+let currentIdx = 0;
+
+function nameWithoutExt(fn) {
+  return fn.replace(/\.png$/i, '');
+}
+
+const grid = document.getElementById('grid');
+cards.forEach((fn, i) => {
+  const item = document.createElement('div');
+  item.className = 'card-item';
+  item.innerHTML = `<img src="cards/${encodeURIComponent(fn)}" alt="${nameWithoutExt(fn)}" loading="lazy">
+    <div class="card-label">${nameWithoutExt(fn)}</div>`;
+  item.addEventListener('click', () => openLb(i));
+  grid.appendChild(item);
+});
+
+const lb     = document.getElementById('lb');
+const lbImg  = document.getElementById('lb-img');
+const lbName = document.getElementById('lb-name');
+
+function openLb(i) {
+  currentIdx = i;
+  updateLb();
+  lb.classList.add('open');
+}
+
+function closeLb() {
+  lb.classList.remove('open');
+}
+
+function updateLb() {
+  const fn = cards[currentIdx];
+  lbImg.src  = 'cards/' + encodeURIComponent(fn);
+  lbImg.alt  = nameWithoutExt(fn);
+  lbName.textContent = nameWithoutExt(fn);
+}
+
+function stepLb(dir) {
+  currentIdx = (currentIdx + dir + cards.length) % cards.length;
+  updateLb();
+}
+
+lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
+
+document.addEventListener('keydown', e => {
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'Escape')      closeLb();
+  if (e.key === 'ArrowRight')  stepLb(1);
+  if (e.key === 'ArrowLeft')   stepLb(-1);
+});
+</script>
+</body>
+</html>

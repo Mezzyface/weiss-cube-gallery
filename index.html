@@ -14,134 +14,105 @@
     --accent: #7a7aff;
     --text: #dde0ee;
     --muted: #666;
-    --card-w: 200px;
   }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    min-height: 100vh;
-  }
+  body { background: var(--bg); color: var(--text);
+         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
 
-  header {
-    background: #11111c;
-    border-bottom: 2px solid var(--border);
-    padding: 18px 24px;
-    display: flex;
-    align-items: baseline;
-    gap: 14px;
-  }
+  header { background: #11111c; border-bottom: 2px solid var(--border);
+           padding: 16px 24px; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
   header h1 { font-size: 22px; color: var(--accent); letter-spacing: 0.5px; }
   header .subtitle { font-size: 13px; color: var(--muted); }
 
-  #grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr));
-    gap: 20px;
-    padding: 28px 24px;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
+  /* ── Controls ── */
+  #controls { background: #13131e; border-bottom: 1px solid var(--border);
+              padding: 10px 24px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 
-  .card-item {
-    cursor: pointer;
-    border-radius: 8px;
-    overflow: hidden;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
-    display: flex;
-    flex-direction: column;
-  }
-  .card-item:hover {
-    transform: translateY(-4px) scale(1.02);
-    border-color: var(--accent);
-    box-shadow: 0 8px 28px rgba(122, 122, 255, 0.2);
-  }
-  .card-item img {
-    width: 100%;
-    aspect-ratio: 448 / 626;
-    object-fit: cover;
-    display: block;
-  }
-  .card-label {
-    padding: 8px 10px;
-    font-size: 11px;
-    color: var(--muted);
-    text-align: center;
-    border-top: 1px solid var(--border);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+  .ctrl-group { display: flex; align-items: center; gap: 6px; }
+  .ctrl-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
-  /* Lightbox */
-  #lb {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.88);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    flex-direction: column;
-    gap: 14px;
-  }
+  /* Sort/filter pills */
+  .pill { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;
+          cursor: pointer; border: 1px solid var(--border); background: var(--surface);
+          color: #aaa; transition: all 0.12s; user-select: none; }
+  .pill:hover { border-color: #555; color: #ddd; }
+  .pill.active { border-color: var(--accent); color: #fff; background: #1e1e40; }
+
+  .color-pill { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;
+                cursor: pointer; border: 1px solid transparent; opacity: 0.45; transition: opacity 0.12s; }
+  .color-pill.active { opacity: 1; border-color: rgba(255,255,255,0.25); }
+  .pill-red    { background: #3a0a0a; color: #ff8888; }
+  .pill-blue   { background: #0a0a3a; color: #8899ff; }
+  .pill-green  { background: #0a2a0a; color: #66dd66; }
+  .pill-yellow { background: #2a2a00; color: #ffee44; }
+
+  #count { font-size: 12px; color: var(--muted); margin-left: auto; }
+
+  /* ── Section headers ── */
+  .section-header { grid-column: 1 / -1; padding: 4px 0 8px;
+                    font-size: 11px; font-weight: 700; text-transform: uppercase;
+                    letter-spacing: 1px; color: var(--muted);
+                    border-bottom: 1px solid var(--border); }
+
+  /* ── Grid ── */
+  #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+          gap: 18px; padding: 24px; max-width: 1400px; margin: 0 auto; }
+
+  .card-item { cursor: pointer; border-radius: 8px; overflow: hidden;
+               background: var(--surface); border: 1px solid var(--border);
+               transition: transform 0.14s, border-color 0.14s, box-shadow 0.14s;
+               display: flex; flex-direction: column; position: relative; }
+  .card-item:hover { transform: translateY(-4px) scale(1.02);
+                     border-color: var(--accent);
+                     box-shadow: 0 8px 28px rgba(122,122,255,0.2); }
+
+  .card-item img { width: 100%; aspect-ratio: 448/626; object-fit: cover; display: block; }
+
+  /* Rarity accent strip along top */
+  .card-item::before { content: ''; display: block; height: 3px; width: 100%; }
+  .rarity-RR::before { background: linear-gradient(90deg, #ffcc00, #ff8800); }
+  .rarity-R::before  { background: linear-gradient(90deg, #cc66ff, #8844cc); }
+
+  /* Color stripe on left edge */
+  .card-item { border-left-width: 3px; }
+  .color-red    { border-left-color: #cc3333; }
+  .color-blue   { border-left-color: #3355cc; }
+  .color-green  { border-left-color: #33aa44; }
+  .color-yellow { border-left-color: #ccaa00; }
+
+  .card-footer { padding: 7px 9px 8px; border-top: 1px solid var(--border);
+                 display: flex; flex-direction: column; gap: 4px; }
+  .card-name { font-size: 11px; color: #ccd; font-weight: 600;
+               overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .card-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+
+  .tag { padding: 1px 5px; border-radius: 3px; font-size: 10px; font-weight: 700; }
+  .tag-RR     { background: #332800; color: #ffcc44; }
+  .tag-R      { background: #1e1030; color: #cc88ff; }
+  .tag-bs     { background: #1a2a3a; color: #66aaff; }
+  .tag-power  { background: #1a1a2a; color: #888; }
+
+  /* ── Lightbox ── */
+  #lb { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+        z-index: 1000; align-items: center; justify-content: center;
+        padding: 20px; flex-direction: column; gap: 12px; }
   #lb.open { display: flex; }
-  #lb img {
-    max-height: 85vh;
-    max-width: 90vw;
-    border-radius: 6px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-    object-fit: contain;
-  }
-  #lb-name {
-    color: #eee;
-    font-size: 15px;
-    font-weight: 600;
-    text-align: center;
-  }
-  #lb-close {
-    position: fixed;
-    top: 16px;
-    right: 20px;
-    background: none;
-    border: none;
-    color: #aaa;
-    font-size: 28px;
-    cursor: pointer;
-    line-height: 1;
-    padding: 4px 8px;
-  }
+  #lb img { max-height: 84vh; max-width: 88vw; border-radius: 6px;
+             box-shadow: 0 20px 60px rgba(0,0,0,0.8); object-fit: contain; }
+  #lb-meta { display: flex; gap: 8px; align-items: center; }
+  #lb-name { color: #eee; font-size: 15px; font-weight: 600; }
+  #lb-close { position: fixed; top: 14px; right: 18px; background: none;
+              border: none; color: #aaa; font-size: 28px; cursor: pointer; padding: 4px 8px; }
   #lb-close:hover { color: #fff; }
+  #lb-prev, #lb-next { position: fixed; top: 50%; transform: translateY(-50%);
+                        background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
+                        color: #ccc; font-size: 22px; padding: 12px 16px; cursor: pointer;
+                        border-radius: 6px; user-select: none; }
+  #lb-prev:hover, #lb-next:hover { background: rgba(255,255,255,0.15); }
+  #lb-prev { left: 10px; } #lb-next { right: 10px; }
 
-  #lb-prev, #lb-next {
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    color: #ddd;
-    font-size: 22px;
-    padding: 12px 16px;
-    cursor: pointer;
-    border-radius: 6px;
-    user-select: none;
-  }
-  #lb-prev:hover, #lb-next:hover { background: rgba(255,255,255,0.16); }
-  #lb-prev { left: 12px; }
-  #lb-next { right: 12px; }
-
-  footer {
-    text-align: center;
-    padding: 32px 16px;
-    color: var(--muted);
-    font-size: 12px;
-    border-top: 1px solid var(--border);
-    margin-top: 16px;
-  }
+  footer { text-align: center; padding: 28px 16px; color: var(--muted);
+           font-size: 12px; border-top: 1px solid var(--border); margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -151,92 +122,191 @@
   <span class="subtitle">Card Gallery &mdash; 20 cards</span>
 </header>
 
+<div id="controls">
+  <div class="ctrl-group">
+    <span class="ctrl-label">Sort</span>
+    <span class="pill active" id="sort-rarity"  onclick="setSort('rarity')">Rarity</span>
+    <span class="pill"        id="sort-color"   onclick="setSort('color')">Color&nbsp;Slot</span>
+    <span class="pill"        id="sort-name"    onclick="setSort('name')">Name</span>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-label">Color</span>
+    <span class="color-pill pill-red    active" id="cpill-red"    onclick="toggleColor('red')">Red</span>
+    <span class="color-pill pill-blue   active" id="cpill-blue"   onclick="toggleColor('blue')">Blue</span>
+    <span class="color-pill pill-green  active" id="cpill-green"  onclick="toggleColor('green')">Green</span>
+    <span class="color-pill pill-yellow active" id="cpill-yellow" onclick="toggleColor('yellow')">Yellow</span>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-label">Rarity</span>
+    <span class="pill active" id="rpill-RR" onclick="toggleRarity('RR')">RR</span>
+    <span class="pill active" id="rpill-R"  onclick="toggleRarity('R')">R</span>
+  </div>
+  <span id="count"></span>
+</div>
+
 <div id="grid"></div>
 
 <footer>WeissCube &mdash; a custom Weiss Schwarz cube</footer>
 
 <div id="lb">
-  <button id="lb-close" onclick="closeLb()" title="Close (Esc)">&#x2715;</button>
-  <button id="lb-prev" onclick="stepLb(-1)">&#8249;</button>
+  <button id="lb-close" onclick="closeLb()">&#x2715;</button>
+  <button id="lb-prev"  onclick="stepLb(-1)">&#8249;</button>
   <img id="lb-img" src="" alt="">
-  <div id="lb-name"></div>
+  <div id="lb-meta">
+    <span id="lb-name"></span>
+  </div>
   <button id="lb-next" onclick="stepLb(1)">&#8250;</button>
 </div>
 
 <script>
-const cards = [
-  "ASU - Sweeper.png",
-  "Agent Gulliver Boxed.png",
-  "Amillion.png",
-  "Aria Robot.png",
-  "Boollseye.png",
-  "Butler Boxed.png",
-  "Chef.png",
-  "Cryboo.png",
-  "Excaliboo.png",
-  "Exploreboo.png",
-  "Hollow Thug - Looter.png",
-  "Luckyboo.png",
-  "Miss Esme Boxed.png",
-  "Officer Cui Boxed.png",
-  "Overtimeboo.png",
-  "Plugboo Boxed.png",
-  "Red Moccus Boxed.png",
-  "Safety Boxed.png",
-  "Sprout Boxed.png",
-  "Sumoboo.png"
+const CARDS = [
+  // ── RR ──────────────────────────────────────────────────
+  { file:"Agent Gulliver Boxed.png",  name:"Agent Gulliver (Boxed)", rarity:"RR", color:"red",    power:1000, mechanics:["BRAINSTORM"] },
+  { file:"Excaliboo.png",             name:"Excaliboo",              rarity:"RR", color:"red",    power:1000, mechanics:[] },
+  { file:"Red Moccus Boxed.png",      name:"Red Moccus (Boxed)",     rarity:"RR", color:"red",    power:500,  mechanics:[] },
+  { file:"Butler Boxed.png",          name:"Butler (Boxed)",         rarity:"RR", color:"blue",   power:500,  mechanics:[] },
+  { file:"Overtimeboo.png",           name:"Overtimeboo",            rarity:"RR", color:"blue",   power:2000, mechanics:[] },
+  { file:"Plugboo Boxed.png",         name:"Plugboo (Boxed)",        rarity:"RR", color:"blue",   power:1000, mechanics:["BRAINSTORM"] },
+  { file:"Safety Boxed.png",          name:"Safety (Boxed)",         rarity:"RR", color:"blue",   power:500,  mechanics:[] },
+  { file:"Luckyboo.png",              name:"Luckyboo",               rarity:"RR", color:"green",  power:1500, mechanics:[] },
+  { file:"Miss Esme Boxed.png",       name:"Miss Esme (Boxed)",      rarity:"RR", color:"green",  power:500,  mechanics:["BRAINSTORM"] },
+  { file:"Sprout Boxed.png",          name:"Sprout (Boxed)",         rarity:"RR", color:"green",  power:1500, mechanics:[] },
+  { file:"Boollseye.png",             name:"Boollseye",              rarity:"RR", color:"yellow", power:1000, mechanics:[] },
+  { file:"Officer Cui Boxed.png",     name:"Officer Cui (Boxed)",    rarity:"RR", color:"yellow", power:500,  mechanics:["BRAINSTORM"] },
+  // ── R ───────────────────────────────────────────────────
+  { file:"Hollow Thug - Looter.png",  name:"Hollow Thug – Looter",   rarity:"R",  color:"red",    power:1000, mechanics:[] },
+  { file:"Sumoboo.png",               name:"Sumoboo",                rarity:"R",  color:"red",    power:1000, mechanics:[] },
+  { file:"ASU - Sweeper.png",         name:"ASU – Sweeper",          rarity:"R",  color:"blue",   power:2500, mechanics:[] },
+  { file:"Cryboo.png",                name:"Cryboo",                 rarity:"R",  color:"blue",   power:1000, mechanics:[] },
+  { file:"Aria Robot.png",            name:"Aria (Robot)",           rarity:"R",  color:"green",  power:500,  mechanics:[] },
+  { file:"Exploreboo.png",            name:"Exploreboo",             rarity:"R",  color:"green",  power:1500, mechanics:[] },
+  { file:"Amillion.png",              name:"Amillion",               rarity:"R",  color:"yellow", power:1000, mechanics:[] },
+  { file:"Chef.png",                  name:"Chef",                   rarity:"R",  color:"yellow", power:2000, mechanics:[] },
 ];
 
-let currentIdx = 0;
+const COLOR_ORDER  = { red:0, blue:1, green:2, yellow:3 };
+const RARITY_ORDER = { RR:0, R:1 };
 
-function nameWithoutExt(fn) {
-  return fn.replace(/\.png$/i, '');
+let currentSort   = 'rarity';
+let activeColors  = new Set(['red','blue','green','yellow']);
+let activeRarities = new Set(['RR','R']);
+let lbIndex = 0;
+let lbVisible = [];
+
+function setSort(mode) {
+  currentSort = mode;
+  ['rarity','color','name'].forEach(m => {
+    document.getElementById('sort-' + m).classList.toggle('active', m === mode);
+  });
+  render();
 }
 
-const grid = document.getElementById('grid');
-cards.forEach((fn, i) => {
-  const item = document.createElement('div');
-  item.className = 'card-item';
-  item.innerHTML = `<img src="cards/${encodeURIComponent(fn)}" alt="${nameWithoutExt(fn)}" loading="lazy">
-    <div class="card-label">${nameWithoutExt(fn)}</div>`;
-  item.addEventListener('click', () => openLb(i));
-  grid.appendChild(item);
-});
+function toggleColor(c) {
+  if (activeColors.has(c)) {
+    if (activeColors.size === 1) return; // keep at least one
+    activeColors.delete(c);
+  } else {
+    activeColors.add(c);
+  }
+  document.getElementById('cpill-' + c).classList.toggle('active', activeColors.has(c));
+  render();
+}
 
-const lb     = document.getElementById('lb');
-const lbImg  = document.getElementById('lb-img');
-const lbName = document.getElementById('lb-name');
+function toggleRarity(r) {
+  if (activeRarities.has(r)) {
+    if (activeRarities.size === 1) return;
+    activeRarities.delete(r);
+  } else {
+    activeRarities.add(r);
+  }
+  document.getElementById('rpill-' + r).classList.toggle('active', activeRarities.has(r));
+  render();
+}
 
-function openLb(i) {
-  currentIdx = i;
+function getSortKey(card) {
+  if (currentSort === 'rarity') return [RARITY_ORDER[card.rarity], COLOR_ORDER[card.color], card.name];
+  if (currentSort === 'color')  return [COLOR_ORDER[card.color], RARITY_ORDER[card.rarity], card.name];
+  return [card.name];
+}
+
+function sectionLabel(card, prev) {
+  if (currentSort === 'rarity') {
+    const label = card.rarity === 'RR' ? 'RR — Double Rare' : 'R — Rare';
+    return (!prev || prev.rarity !== card.rarity) ? label : null;
+  }
+  if (currentSort === 'color') {
+    const c = card.color.charAt(0).toUpperCase() + card.color.slice(1);
+    const label = `${c} Slot`;
+    return (!prev || prev.color !== card.color) ? label : null;
+  }
+  return null;
+}
+
+function render() {
+  const filtered = CARDS.filter(c => activeColors.has(c.color) && activeRarities.has(c.rarity));
+  const sorted = [...filtered].sort((a, b) => {
+    const ka = getSortKey(a), kb = getSortKey(b);
+    for (let i = 0; i < ka.length; i++) {
+      if (ka[i] < kb[i]) return -1;
+      if (ka[i] > kb[i]) return  1;
+    }
+    return 0;
+  });
+
+  lbVisible = sorted;
+  document.getElementById('count').textContent = `${sorted.length} cards`;
+
+  const grid = document.getElementById('grid');
+  const frags = [];
+  let prev = null;
+  sorted.forEach((card, idx) => {
+    const sec = sectionLabel(card, prev);
+    if (sec) frags.push(`<div class="section-header">${sec}</div>`);
+    prev = card;
+
+    const tags = [`<span class="tag tag-${card.rarity}">${card.rarity}</span>`];
+    card.mechanics.forEach(m => tags.push(`<span class="tag tag-bs">${m}</span>`));
+    tags.push(`<span class="tag tag-power">${card.power}pw</span>`);
+
+    frags.push(`
+      <div class="card-item rarity-${card.rarity} color-${card.color}" data-idx="${idx}" onclick="openLb(${idx})">
+        <img src="cards/${encodeURIComponent(card.file)}" alt="${card.name}" loading="lazy">
+        <div class="card-footer">
+          <div class="card-name" title="${card.name}">${card.name}</div>
+          <div class="card-tags">${tags.join('')}</div>
+        </div>
+      </div>`);
+  });
+  grid.innerHTML = frags.join('');
+}
+
+// ── Lightbox ──────────────────────────────────────────────
+function openLb(idx) {
+  lbIndex = idx;
   updateLb();
-  lb.classList.add('open');
+  document.getElementById('lb').classList.add('open');
 }
-
-function closeLb() {
-  lb.classList.remove('open');
-}
-
-function updateLb() {
-  const fn = cards[currentIdx];
-  lbImg.src  = 'cards/' + encodeURIComponent(fn);
-  lbImg.alt  = nameWithoutExt(fn);
-  lbName.textContent = nameWithoutExt(fn);
-}
-
+function closeLb() { document.getElementById('lb').classList.remove('open'); }
 function stepLb(dir) {
-  currentIdx = (currentIdx + dir + cards.length) % cards.length;
+  lbIndex = (lbIndex + dir + lbVisible.length) % lbVisible.length;
   updateLb();
 }
+function updateLb() {
+  const card = lbVisible[lbIndex];
+  document.getElementById('lb-img').src = 'cards/' + encodeURIComponent(card.file);
+  document.getElementById('lb-img').alt = card.name;
+  document.getElementById('lb-name').textContent = `${card.name}  ·  ${card.rarity}  ·  ${card.color}  ·  ${card.power}pw`;
+}
 
-lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
-
+document.getElementById('lb').addEventListener('click', e => { if (e.target === document.getElementById('lb')) closeLb(); });
 document.addEventListener('keydown', e => {
-  if (!lb.classList.contains('open')) return;
-  if (e.key === 'Escape')      closeLb();
-  if (e.key === 'ArrowRight')  stepLb(1);
-  if (e.key === 'ArrowLeft')   stepLb(-1);
+  if (!document.getElementById('lb').classList.contains('open')) return;
+  if (e.key === 'Escape')     closeLb();
+  if (e.key === 'ArrowRight') stepLb(1);
+  if (e.key === 'ArrowLeft')  stepLb(-1);
 });
+
+render();
 </script>
 </body>
 </html>

@@ -70,8 +70,10 @@
 
   /* Rarity accent strip along top */
   .card-item::before { content: ''; display: block; height: 3px; width: 100%; }
-  .rarity-RR::before { background: linear-gradient(90deg, #ffcc00, #ff8800); }
-  .rarity-R::before  { background: linear-gradient(90deg, #cc66ff, #8844cc); }
+  .rarity-RR::before    { background: linear-gradient(90deg, #ffcc00, #ff8800); }
+  .rarity-R::before     { background: linear-gradient(90deg, #cc66ff, #8844cc); }
+  .rarity-U::before     { background: linear-gradient(90deg, #44ddcc, #228877); }
+  .rarity-event::before { background: linear-gradient(90deg, #66dd66, #228822); }
 
   /* Color stripe on left edge */
   .card-item { border-left-width: 3px; }
@@ -89,6 +91,8 @@
   .tag { padding: 1px 5px; border-radius: 3px; font-size: 10px; font-weight: 700; }
   .tag-RR     { background: #332800; color: #ffcc44; }
   .tag-R      { background: #1e1030; color: #cc88ff; }
+  .tag-U      { background: #0a2a28; color: #44ddcc; }
+  .tag-event  { background: #1a2a1a; color: #88dd88; }
   .tag-bs     { background: #1a2a3a; color: #66aaff; }
   .tag-power  { background: #1a1a2a; color: #888; }
 
@@ -119,7 +123,7 @@
 
 <header>
   <h1>WeissCube</h1>
-  <span class="subtitle">Card Gallery &mdash; 20 cards</span>
+  <span class="subtitle">Card Gallery &mdash; 25 cards</span>
 </header>
 
 <div id="controls">
@@ -138,8 +142,10 @@
   </div>
   <div class="ctrl-group">
     <span class="ctrl-label">Rarity</span>
-    <span class="pill active" id="rpill-RR" onclick="toggleRarity('RR')">RR</span>
-    <span class="pill active" id="rpill-R"  onclick="toggleRarity('R')">R</span>
+    <span class="pill active" id="rpill-RR"    onclick="toggleRarity('RR')">RR</span>
+    <span class="pill active" id="rpill-R"     onclick="toggleRarity('R')">R</span>
+    <span class="pill active" id="rpill-U"     onclick="toggleRarity('U')">U</span>
+    <span class="pill active" id="rpill-event" onclick="toggleRarity('event')">Event</span>
   </div>
   <span id="count"></span>
 </div>
@@ -161,35 +167,42 @@
 <script>
 const CARDS = [
   // ── RR ──────────────────────────────────────────────────
-  { file:"Agent Gulliver Boxed.png",  name:"Agent Gulliver (Boxed)", rarity:"RR", color:"red",    power:1000, mechanics:["BRAINSTORM"] },
-  { file:"Excaliboo.png",             name:"Excaliboo",              rarity:"RR", color:"red",    power:1000, mechanics:[] },
-  { file:"Red Moccus Boxed.png",      name:"Red Moccus (Boxed)",     rarity:"RR", color:"red",    power:500,  mechanics:[] },
-  { file:"Butler Boxed.png",          name:"Butler (Boxed)",         rarity:"RR", color:"blue",   power:500,  mechanics:[] },
-  { file:"Overtimeboo.png",           name:"Overtimeboo",            rarity:"RR", color:"blue",   power:2000, mechanics:[] },
-  { file:"Plugboo Boxed.png",         name:"Plugboo (Boxed)",        rarity:"RR", color:"blue",   power:1000, mechanics:["BRAINSTORM"] },
-  { file:"Safety Boxed.png",          name:"Safety (Boxed)",         rarity:"RR", color:"blue",   power:500,  mechanics:[] },
-  { file:"Luckyboo.png",              name:"Luckyboo",               rarity:"RR", color:"green",  power:1500, mechanics:[] },
-  { file:"Miss Esme Boxed.png",       name:"Miss Esme (Boxed)",      rarity:"RR", color:"green",  power:500,  mechanics:["BRAINSTORM"] },
-  { file:"Sprout Boxed.png",          name:"Sprout (Boxed)",         rarity:"RR", color:"green",  power:1500, mechanics:[] },
-  { file:"Boollseye.png",             name:"Boollseye",              rarity:"RR", color:"yellow", power:1000, mechanics:[] },
-  { file:"Officer Cui Boxed.png",     name:"Officer Cui (Boxed)",    rarity:"RR", color:"yellow", power:500,  mechanics:["BRAINSTORM"] },
+  { file:"Agent Gulliver Boxed.png",  name:"Agent Gulliver (Boxed)", rarity:"RR",    color:"red",    power:1000, mechanics:["BRAINSTORM"] },
+  { file:"Excaliboo.png",             name:"Excaliboo",              rarity:"RR",    color:"red",    power:1000, mechanics:[] },
+  { file:"Red Moccus Boxed.png",      name:"Red Moccus (Boxed)",     rarity:"RR",    color:"red",    power:500,  mechanics:[] },
+  { file:"Butler Boxed.png",          name:"Butler (Boxed)",         rarity:"RR",    color:"blue",   power:500,  mechanics:[] },
+  { file:"Overtimeboo.png",           name:"Overtimeboo",            rarity:"RR",    color:"blue",   power:2000, mechanics:[] },
+  { file:"Plugboo Boxed.png",         name:"Plugboo (Boxed)",        rarity:"RR",    color:"blue",   power:1000, mechanics:["BRAINSTORM"] },
+  { file:"Safety Boxed.png",          name:"Safety (Boxed)",         rarity:"RR",    color:"blue",   power:500,  mechanics:[] },
+  { file:"Luckyboo.png",              name:"Luckyboo",               rarity:"RR",    color:"green",  power:1500, mechanics:[] },
+  { file:"Miss Esme Boxed.png",       name:"Miss Esme (Boxed)",      rarity:"RR",    color:"green",  power:500,  mechanics:["BRAINSTORM"] },
+  { file:"Sprout Boxed.png",          name:"Sprout (Boxed)",         rarity:"RR",    color:"green",  power:1500, mechanics:[] },
+  { file:"Boollseye.png",             name:"Boollseye",              rarity:"RR",    color:"yellow", power:1000, mechanics:[] },
+  { file:"Officer Cui Boxed.png",     name:"Officer Cui (Boxed)",    rarity:"RR",    color:"yellow", power:500,  mechanics:["BRAINSTORM"] },
   // ── R ───────────────────────────────────────────────────
-  { file:"Hollow Thug - Looter.png",  name:"Hollow Thug – Looter",   rarity:"R",  color:"red",    power:1000, mechanics:[] },
-  { file:"Sumoboo.png",               name:"Sumoboo",                rarity:"R",  color:"red",    power:1000, mechanics:[] },
-  { file:"ASU - Sweeper.png",         name:"ASU – Sweeper",          rarity:"R",  color:"blue",   power:2500, mechanics:[] },
-  { file:"Cryboo.png",                name:"Cryboo",                 rarity:"R",  color:"blue",   power:1000, mechanics:[] },
-  { file:"Aria Robot.png",            name:"Aria (Robot)",           rarity:"R",  color:"green",  power:500,  mechanics:[] },
-  { file:"Exploreboo.png",            name:"Exploreboo",             rarity:"R",  color:"green",  power:1500, mechanics:[] },
-  { file:"Amillion.png",              name:"Amillion",               rarity:"R",  color:"yellow", power:1000, mechanics:[] },
-  { file:"Chef.png",                  name:"Chef",                   rarity:"R",  color:"yellow", power:2000, mechanics:[] },
+  { file:"Hollow Thug - Looter.png",  name:"Hollow Thug – Looter",   rarity:"R",     color:"red",    power:1000, mechanics:[] },
+  { file:"Sumoboo.png",               name:"Sumoboo",                rarity:"R",     color:"red",    power:1000, mechanics:[] },
+  { file:"ASU - Sweeper.png",         name:"ASU – Sweeper",          rarity:"R",     color:"blue",   power:2500, mechanics:[] },
+  { file:"Cryboo.png",                name:"Cryboo",                 rarity:"R",     color:"blue",   power:1000, mechanics:[] },
+  { file:"Aria Robot.png",            name:"Aria (Robot)",           rarity:"R",     color:"green",  power:500,  mechanics:[] },
+  { file:"Exploreboo.png",            name:"Exploreboo",             rarity:"R",     color:"green",  power:1500, mechanics:[] },
+  { file:"Amillion.png",              name:"Amillion",               rarity:"R",     color:"yellow", power:1000, mechanics:[] },
+  { file:"Chef.png",                  name:"Chef",                   rarity:"R",     color:"yellow", power:2000, mechanics:[] },
+  // ── U ───────────────────────────────────────────────────
+  { file:"Bagboo.png",                name:"Bagboo",                 rarity:"U",     color:"red",    power:2000, mechanics:[] },
+  { file:"Boocream.png",              name:"Boocream",               rarity:"U",     color:"blue",   power:500,  mechanics:[] },
+  { file:"Billy Kid.png",             name:"Billy Kid",              rarity:"U",     color:"green",  power:1500, mechanics:[] },
+  { file:"Von and Ju.png",            name:"Von and Ju",             rarity:"U",     color:"yellow", power:1500, mechanics:[] },
+  // ── Events ──────────────────────────────────────────────
+  { file:"Click. Click. BOOM.png",    name:"Click. Click. BOOM",     rarity:"event", color:"yellow", power:null, mechanics:[] },
 ];
 
 const COLOR_ORDER  = { red:0, blue:1, green:2, yellow:3 };
-const RARITY_ORDER = { RR:0, R:1 };
+const RARITY_ORDER = { RR:0, R:1, U:2, event:3 };
 
 let currentSort   = 'rarity';
 let activeColors  = new Set(['red','blue','green','yellow']);
-let activeRarities = new Set(['RR','R']);
+let activeRarities = new Set(['RR','R','U','event']);
 let lbIndex = 0;
 let lbVisible = [];
 
@@ -223,6 +236,10 @@ function toggleRarity(r) {
   render();
 }
 
+function rarityLabel(r) {
+  return { RR:'RR — Double Rare', R:'R — Rare', U:'U — Uncommon', event:'Events' }[r] || r;
+}
+
 function getSortKey(card) {
   if (currentSort === 'rarity') return [RARITY_ORDER[card.rarity], COLOR_ORDER[card.color], card.name];
   if (currentSort === 'color')  return [COLOR_ORDER[card.color], RARITY_ORDER[card.rarity], card.name];
@@ -231,8 +248,7 @@ function getSortKey(card) {
 
 function sectionLabel(card, prev) {
   if (currentSort === 'rarity') {
-    const label = card.rarity === 'RR' ? 'RR — Double Rare' : 'R — Rare';
-    return (!prev || prev.rarity !== card.rarity) ? label : null;
+    return (!prev || prev.rarity !== card.rarity) ? rarityLabel(card.rarity) : null;
   }
   if (currentSort === 'color') {
     const c = card.color.charAt(0).toUpperCase() + card.color.slice(1);
@@ -264,9 +280,12 @@ function render() {
     if (sec) frags.push(`<div class="section-header">${sec}</div>`);
     prev = card;
 
-    const tags = [`<span class="tag tag-${card.rarity}">${card.rarity}</span>`];
+    const rarityTag = card.rarity === 'event'
+      ? `<span class="tag tag-event">Event</span>`
+      : `<span class="tag tag-${card.rarity}">${card.rarity}</span>`;
+    const tags = [rarityTag];
     card.mechanics.forEach(m => tags.push(`<span class="tag tag-bs">${m}</span>`));
-    tags.push(`<span class="tag tag-power">${card.power}pw</span>`);
+    if (card.power) tags.push(`<span class="tag tag-power">${card.power}pw</span>`);
 
     frags.push(`
       <div class="card-item rarity-${card.rarity} color-${card.color}" data-idx="${idx}" onclick="openLb(${idx})">
